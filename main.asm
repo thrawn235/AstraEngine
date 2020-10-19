@@ -1,3 +1,6 @@
+;main.asm
+;by sebastian gurlin
+
 !to "main.o", cbm
 
 ;Zero Page Variables
