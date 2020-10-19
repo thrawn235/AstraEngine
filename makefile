@@ -16,3 +16,8 @@ run:
 	$(emulator) -prg $(binDir)main.prg -run -scale 3
 clean:
 	rm -f ./bin/*
+
+push:
+	git add *
+	git commit -m "commit"
+	git push origin master

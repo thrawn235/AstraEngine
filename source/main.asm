@@ -2,7 +2,7 @@
 ;by sebastian gurlin
 
 ;Zero Page Variables
-A  = 20
+A  = $20
 Al = A
 Ah = A + 1
 
@@ -19,14 +19,20 @@ Bh = B + 1
 ; Start of actual program
 *=$0810
 
+jmp Start
 
 !source "./source/textEngine.asm"
 
-lda <str
+Start:
+
+lda #<str
 sta Al
-lda >str
-sta Ah 
+lda #>str
+sta Ah
 jsr PrintString
 
+loop:
+	jmp loop
+
 ; zero-terminated string containing a newline at the end (char# 13)
-str	!pet	"hello, world!!",13,0
+str:	!pet	"Hello, World!!",13,0
