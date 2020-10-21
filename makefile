@@ -12,6 +12,9 @@ ifeq ($(UNAME_S), Darwin)
 endif
 emulator	= $(emuDir)x16emu
 CC		= acme
+ifeq ($(UNAME_S), Darwin)
+	CC		= /Applications/acme/acme
+endif
 CFLAGS		= -Wno-label-indent -f cbm --cpu 65c02
 sourceFiles	= $(sourceDir)main.asm $(sourceDir)textEngine.asm
 
