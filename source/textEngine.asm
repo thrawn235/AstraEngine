@@ -49,4 +49,20 @@ PrintImmediate:
 		PLA			; pull value
 		TAY  			; restore Y
 		PLA  			; restore A
-		RTS
+		RT
+
+PrintShortInt:
+PrintLongInt:
+PrintShortSignedInt:
+PrintLongSignedInt:
+PrintShortDecimal:
+PrintLongDecimal:
+PrintShortSignedDecimal:
+PrintLongSignedDecimal:
+PrintShortHex:
+PrintLongHex:
+PrintShortBinary:
+PrintLongBinary:
+PrintChar:
+
+PrintF:
