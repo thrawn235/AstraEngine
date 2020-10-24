@@ -25,14 +25,28 @@ jmp Start
 
 Start:
 
+lda #$0F
+jsr $FFD2
+
 lda #<str
 sta Al
 lda #>str
 sta Ah
 jsr PrintString
 
+jsr PrintImmediate
+!raw "This is a local String",13,0
+
+lda #<1024
+sta Ah
+lda #>1024
+sta Al
+lda Ah
+ldy Al
+jsr $BDCD
+
 loop:
 	jmp loop
 
 ; zero-terminated string containing a newline at the end (char# 13)
-str:	!pet	"Hello, World!!",13,0
+str:	!raw	"Hello, World!!",13,0
