@@ -11,12 +11,12 @@ ifeq ($(UNAME_S), Darwin)
 	emuDir		= ./emulator/Mac/x16emu_mac-r38/
 endif
 emulator	= $(emuDir)x16emu
-CC		= acme
+CC		= 64tass
 ifeq ($(UNAME_S), Darwin)
 	CC		= /Applications/acme/acme
 endif
-CFLAGS		= -Wno-label-indent -f cbm --cpu 65c02
-sourceFiles	= $(sourceDir)main.asm $(sourceDir)textEngine.asm
+CFLAGS		= --case-sensitive -Wno-label-left
+sourceFiles	= $(sourceDir)main.asm $(sourceDir)textEngine.asm $(sourceDir)memoryEngine.asm $(sourceDir)inputEngine.asm $(sourceDir)init.asm $(sourceDir)misc.asm
 
 $(binDir)main.prg: $(sourceFiles)
 	$(CC) $(CFLAGS) -o $(binDir)main.prg $(sourceDir)main.asm
@@ -29,7 +29,7 @@ all: $(binDir)main.prg
 
 .PHONY: run
 run:
-	$(emulator) -prg $(binDir)main.prg -run -scale 2
+	$(emulator) -prg $(binDir)main.prg -run -scale 3 -debug -keymap de
 
 .PHONY: clean
 clean:

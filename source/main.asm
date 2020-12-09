@@ -1,52 +1,61 @@
 ;main.asm
 ;by sebastian gurlin
 
-;Zero Page Variables
-A  = $20
-Al = A
-Ah = A + 1
-
-B  = A + 2
-Bl = B
-Bh = B + 1
-
-; Start of BASIC program
-*=$0801
-
-; BASIC "run" line
-!byte $0C,$08,$0A,$00,$9E,$20,$32,$30,$36,$34,$00,$00,$00
-
-; Start of actual program
-*=$0810
+.include "init.asm"
 
 jmp Start
 
-!source "./source/textEngine.asm"
+Object_PrintStatus:
+	jsr PrintImmediate
+	.text "I'm an Object!", 13, 0
+	rts
+
+Object .struct
+	ID 			.word 123
+	name 		.text "Object         ", 0
+	PrintStatus .word Object_PrintStatus
+	end
+.ends
+
+ObjectPrototype .dstruct Object
 
 Start:
+jsr PrintImmediate
+.text "Welcome to X16 Commander", 13, 13, 0
 
-lda #$0F
-jsr $FFD2
-
-lda #<str
+;reserver Memory for Object
+lda #<Object.end
 sta Al
-lda #>str
+lda #>Object.end
 sta Ah
-jsr PrintString
+jsr MMAlloc
+
+;store pointer from MMAlloc in pObject
+lda Bl
+sta pObject
+sta Al
+lda Bh
+sta pObject + 1
+sta Ah
+
+;Initialize the Object (copy Prototype data to Pointer location)
+.InitObject ObjectPrototype, pObject, Object
+
+;store Object pointer in B
+lda pObject
+sta Bl
+lda pObject + 1
+sta Bh
+
+;call virtual Method Object.PrintStatus
+.JumpMethod B, Object.PrintStatus
+
 
 jsr PrintImmediate
-!raw "This is a local String",13,0
+.text "done", 0
 
-lda #<1024
-sta Ah
-lda #>1024
-sta Al
-lda Ah
-ldy Al
-jsr $BDCD
+endless:
+	jmp endless
 
-loop:
-	jmp loop
+pObject .word 0
 
-; zero-terminated string containing a newline at the end (char# 13)
-str:	!raw	"Hello, World!!",13,0
