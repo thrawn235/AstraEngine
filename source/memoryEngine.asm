@@ -161,6 +161,9 @@ MMAlloc:
 	;B = return Address
 	;c flag = 0 = sucess, 1 = fail
 
+	lda #0
+	sta _error
+
 	clc
 	lda Al
 	sta _requestedSize
@@ -171,13 +174,24 @@ MMAlloc:
 	adc #0
 	sta _totalSize + 1
 
+	-
+
 	;get free node
 	lda _totalSize
 	sta Al
 	lda _totalSize + 1
 	sta Ah
 	jsr MMGetNode
-	bcc +				;error ?
+	bcc +			;error ?
+		lda _error
+		bne _totalFail
+			;0
+			jsr MMDefrag
+			lda #1
+			sta _error
+			jmp -
+		_totalFail
+		sec
 		rts 			;then return
 	+
 
@@ -250,6 +264,7 @@ MMAlloc:
 
 	_totalSize		.word 0
 	_requestedSize 	.word 0
+	_error			.byte 0
 
 MMFree:
 	lda Al

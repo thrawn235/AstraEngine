@@ -79,11 +79,36 @@
 	Cl = C
 	Ch = C + 1
 
-	J = C + 2
+	D = C + 2
+	Dl = D
+	Dh = D + 1
+
+	E = D + 2
+	El = E
+	Eh = E + 1
+
+	F = E + 2
+	Fl = F
+	Fh = F + 1
+
+	G = F + 2
+	Gl = G
+	Gh = G + 1
+
+	H = G + 2
+	Hl = H
+	Hh = H + 1
+
+	I = G + 2
+	Il = I
+	Ih = I + 1
+
+	J = I + 2
 	Jl = J
 	Jh = J + 1
 
 
+Startup:
 	; Start of BASIC program
 	*=$0801
 
@@ -93,13 +118,4 @@
 	; Start of actual program
 	*=$0810
 
-jmp PrimeStart
-
-.include "misc.asm"
-.include "textEngine.asm"
-.include "mathEngine.asm"
-.include "memoryEngine.asm"
-.include "inputEngine.asm"
-
-PrimeStart:
-	jsr SetANSI
+jmp Start
