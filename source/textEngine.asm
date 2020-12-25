@@ -186,13 +186,117 @@ PrintF:
 			sta Ah
 			jmp PrintFLoop
 		PritFnotPercentTarget:
-		;phy
 		jsr $FFd2				;print character to stdout (Screen)
-		;ply
 		iny
 		jmp PrintFLoop
 		PrintFSave .word 0
 		PrintFPlaceholder .byte 0
+SPrintF:
+	;Prints a formatted String and inserts Values at placeholder positions
+	;A = pointer to String, B - J = subsequent Pointers to Values
+	;clobbers = Accu, y, A - J
+	lda #1						;save 0 in to Memory
+	sta toMemory 				;we want to write to Memory
+	lda Al 						;save A 
+	sta SPrintFSave 				;save A 
+	lda Ah 						;save A 
+	sta SPrintFSave + 1 			;save A 
+	ldy #0 						;y = 0 for string index
+	ldx #2						;x = 2 points to the next ZeroPage Register A+2 = B
+	SPrintFLoop:
+		lda (A), y 				;get character
+		bne +					;character is 0
+			rts 				;then return
+		+
+		cmp #"%"
+		beq SPritFnotPercent		;character is %
+			jmp SPritFnotPercentTarget
+		SPritFnotPercent:
+			iny 				;next character...
+			lda (A), y
+			sta SPrintFPlaceholder
+			phy
+
+			lda Ah, x
+			sta Ah
+			lda Al, x
+			sta Al
+			inx
+			inx
+
+			lda SPrintFPlaceholder
+			cmp #"i"			;signed int ?
+			bne +
+				;
+			+
+			lda SPrintFPlaceholder
+			cmp #"u"			;unsigned int ?
+			bne +
+				;
+			+
+			lda SPrintFPlaceholder
+			cmp #"h"			;singned hex ?
+			bne +
+				jsr PrintHexShortSigned
+			+
+			lda SPrintFPlaceholder
+			cmp #"x"			;unsigned hex ?
+			bne +
+				jsr PrintHexShort
+			+
+			lda SPrintFPlaceholder
+			cmp #"I"			;signed int ?
+			bne +
+				;
+			+
+			lda SPrintFPlaceholder
+			cmp #"U"			;unsigned int ?
+			bne +
+				;
+			+
+			lda SPrintFPlaceholder
+			cmp #"H"			;singned hex ?
+			bne +
+				jsr PrintHexLongSigned
+			+
+			lda SPrintFPlaceholder
+			cmp #"X"			;unsigned hex ?
+			bne +
+				jsr PrintHexLong
+			+
+			lda SPrintFPlaceholder
+			cmp #"c"			;character ?
+			bne +
+				jsr PrintChar
+			+
+			lda SPrintFPlaceholder
+			cmp #"s"			;string ?
+			bne +
+				jsr PrintString
+			+
+			lda SPrintFPlaceholder
+			cmp #"b"			;binary ?
+			bne +
+				jsr PrintBinaryShort
+			+
+			lda SPrintFPlaceholder
+			cmp #"B"			;binary ?
+			bne +
+				jsr PrintBinaryLong
+			+
+			ply
+			iny
+			lda SPrintFSave
+			sta Al
+			lda SPrintFSave + 1
+			sta Ah
+			jmp SPrintFLoop
+		SPritFnotPercentTarget:
+		jsr Print				;print character to Memory
+		iny
+		jmp SPrintFLoop
+		SPrintFSave .word 0
+		SPrintFPlaceholder .byte 0
 PrintSignAccu:
 	pha
 	rol

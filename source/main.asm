@@ -8,10 +8,15 @@
 Start:
 	jsr SetAnsi
 	
+	.MLoadR A, str3
+	jsr SetStrPtr
 	.MLoadR A, str1
 	.MLoadR B, char1
 	.MLoadR C, short2
 	.MLoadR D, str2
+	jsr SPrintF
+
+	.MLoadR A, str3
 	jsr PrintF
 
 	.MEndlessLoop
@@ -28,4 +33,4 @@ long1	.word 12345
 long2	.word $ABCD
 long3	.word %1111111100001000
 long4 	.word -$1234
-str3 	.text "                                        ", 0
+str3 	.text "                                                                                   ", 0
